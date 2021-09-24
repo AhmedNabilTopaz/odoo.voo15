@@ -29,6 +29,15 @@ class StockMove(models.Model):
     _inherit = "stock.move"
 
     @api.model
+    def create(self, vals):
+        ctx = dict(self._context or {})
+        if 'magento2' in ctx:
+            location_id = ctx.get('odoo_location_id',0)
+            if location_id and vals:
+                vals['location_id'] = location_id
+        return super(StockMove, self).create(vals)
+
+    @api.model
     def magento2_stock_update(self, odoo_product_id, warehouseId):
         ctx = dict(self._context or {})
         mappingObj = self.env['connector.product.mapping'].search(
@@ -120,6 +129,7 @@ class StockMove(models.Model):
     def magento_multi_stock_update(self, odooProductId, warehouseId):
         url = ''
         ctx = dict(self._context or {})
+        stock_operation = ctx.get('stock_operation','')
         mappingObj = self.env['connector.product.mapping'].search([('name', '=', odooProductId)], limit=1)
         if mappingObj:
             mageProductId = mappingObj.ecomm_id
@@ -133,6 +143,8 @@ class StockMove(models.Model):
                 destSourceCode = self.env['magento.source'].search([('odoo_location', '=', locationDestId)], limit=1).mage_source_code
                 originSourceCode = self.env['magento.source'].search([('odoo_location', '=', locationId)], limit=1).mage_source_code
                 if originSourceCode and destSourceCode:
+                        if stock_operation != '_action_done':
+                            return True
                         data={
                                 'originSourceCode': originSourceCode, 
                                 'destinationSourceCode': destSourceCode, 
