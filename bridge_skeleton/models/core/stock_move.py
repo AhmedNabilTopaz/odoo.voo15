@@ -58,6 +58,8 @@ class StockMove(models.Model):
                         if order_channel in ecomm_cannels and data.picking_id \
                                 and data.picking_id.picking_type_code == 'outgoing':
                             flag = 0
+                    elif not data.warehouse_id:
+                        flag = 2
                 else:
                     flag = 2  # no origin
                 warehouse_id = 0
