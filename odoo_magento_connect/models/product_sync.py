@@ -173,7 +173,9 @@ class ConnectorSnippet(models.TransientModel):
             {"attribute_code": "description", "value": prod_obj.description},
             {"attribute_code": "short_description", "value": prod_obj.description_sale},
             {"attribute_code": "category_ids", "value": prod_categs},
-            {"attribute_code": "cost", "value": prod_obj.standard_price or 0.00}
+            {"attribute_code": "cost", "value": prod_obj.standard_price or 0.00},
+            {"attribute_code": "barcode", "value": prod_obj.barcode},
+            {"attribute_code": "barcode_2", "value": prod_obj.x_barcode2}
         ]
         if 'custom_attributes' not in get_product_data :
             get_product_data['custom_attributes'] = custom_attributes
